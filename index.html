@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library Bingo</title>
+    <script defer src="https://unpkg.com/react@17/umd/react.development.js"></script>
+    <script defer src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
+    <script defer src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+    <style>
+        .grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; padding: 20px; text-align: center; }
+        .cell { padding: 20px; border: 2px solid black; border-radius: 5px; cursor: pointer; }
+        .marked { background-color: green; color: white; }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+    <script type="text/babel">
+        const bingoTerms = [
+            "Research process", "Research stages", "Information search", "Citation", "Citing sources", "Library database", "Peer-reviewed", "Plagiarism", "Research time", "Source credibility", "Evaluation", "Library catalog", "Academia", "Deep web", "Surface web", "Primary sources", "Secondary sources", "Research guides", "Keywords", "Boolean operators", "Search filtering", "Narrowing search", "Search string", "Search results", "Scholarly sources", "Full-text search", "Call numbers", "Circulation desk", "Reference desk", "Library website", "Librarian chat", "Virtual help", "Study spaces", "Library hours", "Library Bingo", "Free space", "Initiation", "Selection", "Exploration", "Formulation", "Collection", "Presentation", "Assessment", "Uncertainty", "Optimism", "Confusion", "Frustration", "Doubt", "Clarity", "Confidence", "Satisfaction", "Disappointment", "Sense of accomplishment", "Vague thoughts", "Focused thoughts", "Self-awareness", "Increased interest", "Seeking information", "Exploring sources", "Documenting research", "Research anxiety", "Emotional awareness", "Coping strategies", "Curiosity", "Open-ended questions", "Observation without judgment", "Source evaluation", "SIFT method", "Stop", "Investigate source", "Find better coverage", "Trace to original", "Authority", "Purpose", "Publication & format", "Relevance", "Date of publication", "Documentation", "Investigate", "Find coverage", "Trace back", "Author credibility", "Intended audience", "Scholarly vs popular", "Bias detection", "Misinformation", "Fact-checking", "Editorial perspective", "Peer review", "Online vs print", "Self-published sources", "Institutional bias", "Corporate sponsorship", "Geographic context", "Citation tracking", "Quotation context", "Cherry-picking data", "Attribution ethics", "Cross-referencing sources", "Search algorithm bias", "Ranking systems", "Data-driven bias", "Digital inequality", "Algorithmic transparency", "Critical algorithmic literacy", "Marginalization", "Misclassification", "Search result distortion", "Transparent ranking systems", "Library of Congress Subject Headings (LCSH)", "Dewey Decimal System", "Metadata bias", "Standardized indexing", "Descriptive cataloging", "Systemic bias", "Non-neutral spaces", "Multiplicity of viewpoints", "Inclusive metadata"
+        ];
+        
+        const generateBingoCard = () => {
+            return [...bingoTerms].sort(() => Math.random() - 0.5).slice(0, 25);
+        };
+        
+        function Bingo() {
+            const [card, setCard] = React.useState(generateBingoCard());
+            const [marked, setMarked] = React.useState(new Set());
+        
+            const toggleMark = (term) => {
+                setMarked(prev => {
+                    const newSet = new Set(prev);
+                    newSet.has(term) ? newSet.delete(term) : newSet.add(term);
+                    return newSet;
+                });
+            };
+        
+            return (
+                <div className="grid">
+                    {card.map((term, index) => (
+                        <div key={index} className={`cell ${marked.has(term) ? "marked" : ""}`} onClick={() => toggleMark(term)}>
+                            {term}
+                        </div>
+                    ))}
+                </div>
+            );
+        }
+        
+        ReactDOM.render(<Bingo />, document.getElementById("root"));
+    </script>
+</body>
+</html>
