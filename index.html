@@ -4,107 +4,482 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Library Bingo</title>
-    <script defer src="https://unpkg.com/react@17/umd/react.development.js"></script>
-    <script defer src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
-    <script defer src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Aptos+Narrow:wght@400;700&display=swap');
         
+        :root {
+            --primary-color: #00629B;
+            --secondary-color: #6BBBAE;
+            --accent-color: #FF6A13;
+            --text-color: #333F48;
+            --border-color: #4E87A0;
+            --background-color: #ffffff;
+            --hover-bg-color: #e6f2f0;
+            --focus-outline-color: #2684FF;
+        }
+        
+        * {
+            box-sizing: border-box;
+        }
+        
         body {
             font-family: 'Aptos Narrow', sans-serif;
-            background-color: white;
-            color: #333F48;
+            background-color: var(--background-color);
+            color: var(--text-color);
             text-align: center;
+            line-height: 1.5;
+            margin: 0;
+            padding: 16px;
         }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 16px;
+        }
+        
+        h1 {
+            color: var(--primary-color);
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+        
+        .instructions {
+            margin-bottom: 1.5rem;
+            font-size: 1rem;
+        }
+        
+        .controls {
+            margin-bottom: 1.5rem;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 12px;
+        }
+        
+        button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 12px 16px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            font-family: 'Aptos Narrow', sans-serif;
+            transition: background-color 0.2s;
+            margin: 0 5px;
+        }
+        
+        button:hover {
+            background-color: #00538a;
+        }
+        
+        button:focus {
+            outline: 3px solid var(--focus-outline-color);
+            outline-offset: 2px;
+        }
+        
         .grid {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
             gap: 10px;
-            padding: 20px;
-            text-align: center;
+            margin: 0 auto;
+            max-width: 800px;
         }
+        
         .cell {
-            padding: 20px;
-            border: 2px solid #4E87A0;
+            aspect-ratio: 1/1;
+            padding: 8px;
+            border: 2px solid var(--border-color);
             border-radius: 5px;
             cursor: pointer;
-            background-color: white;
-            color: #333F48;
+            background-color: var(--background-color);
+            color: var(--text-color);
             font-size: 16px;
             font-weight: bold;
+            transition: background-color 0.2s, color 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+            min-height: 80px;
         }
+        
         .cell:hover {
-            background-color: #6BBBAE;
+            background-color: var(--hover-bg-color);
         }
-        .marked {
-            background-color: #00629B;
+        
+        .cell:focus {
+            outline: 3px solid var(--focus-outline-color);
+            outline-offset: 2px;
+        }
+        
+        .cell.marked {
+            background-color: var(--primary-color);
             color: white;
         }
+        
         .winner .cell.marked {
-            background-color: #FF6A13;
+            background-color: var(--accent-color);
         }
+        
         .celebration {
             text-align: center;
-            font-size: 24px;
-            color: #FF6A13;
-            margin-top: 20px;
+            font-size: 1.5rem;
+            color: var(--accent-color);
+            margin-top: 1.5rem;
             font-weight: bold;
+            animation: pulse 1.5s infinite;
+        }
+        
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border-width: 0;
+        }
+        
+        .live-region {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border-width: 0;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        @media (max-width: 768px) {
+            .grid {
+                grid-template-columns: repeat(5, 1fr);
+                gap: 6px;
+            }
+            
+            .cell {
+                padding: 6px;
+                font-size: 14px;
+                min-height: 60px;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .grid {
+                grid-template-columns: repeat(5, 1fr);
+                gap: 4px;
+            }
+            
+            .cell {
+                padding: 4px;
+                font-size: 12px;
+                min-height: 50px;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+            }
+        }
+        
+        /* High contrast mode support */
+        @media (forced-colors: active) {
+            .cell {
+                border: 2px solid CanvasText;
+            }
+            
+            .cell.marked {
+                background-color: Highlight;
+                color: HighlightText;
+            }
+            
+            button {
+                border: 2px solid ButtonText;
+            }
         }
     </style>
 </head>
 <body>
-    <h1>Library Bingo</h1>
-    <div id="root"></div>
-    <script type="text/babel">
-        const bingoTerms = [
-            "Research process", "Research stages", "Information search", "Citation", "Citing sources", "Library database", "Peer-reviewed", "Plagiarism", "Research time", "Source credibility", "Evaluation", "Library catalog", "Academia", "Deep web", "Surface web", "Primary sources", "Secondary sources", "Research guides", "Keywords", "Boolean operators", "Search filtering", "Narrowing search", "Search string", "Search results", "Scholarly sources", "Full-text search", "Call numbers", "Circulation desk", "Reference desk", "Library website", "Librarian chat", "Virtual help", "Study spaces", "Library hours", "Library Bingo", "Free space", "Initiation", "Selection", "Exploration", "Formulation", "Collection", "Presentation", "Assessment", "Uncertainty", "Optimism", "Confusion", "Frustration", "Doubt", "Clarity", "Confidence", "Satisfaction", "Disappointment", "Sense of accomplishment", "Vague thoughts", "Focused thoughts", "Self-awareness", "Increased interest", "Seeking information", "Exploring sources", "Documenting research", "Research anxiety", "Emotional awareness", "Coping strategies", "Curiosity", "Open-ended questions", "Observation without judgment", "Source evaluation", "SIFT method", "Stop", "Investigate source", "Find better coverage", "Trace to original", "Authority", "Purpose", "Publication & format", "Relevance", "Date of publication", "Documentation", "Investigate", "Find coverage", "Trace back", "Author credibility", "Intended audience", "Scholarly vs popular", "Bias detection", "Misinformation", "Fact-checking", "Editorial perspective", "Peer review", "Online vs print", "Self-published sources", "Institutional bias", "Corporate sponsorship", "Geographic context", "Citation tracking", "Quotation context", "Cherry-picking data", "Attribution ethics", "Cross-referencing sources", "Search algorithm bias", "Ranking systems", "Data-driven bias", "Digital inequality", "Algorithmic transparency", "Critical algorithmic literacy", "Marginalization", "Misclassification", "Search result distortion", "Transparent ranking systems", "Library of Congress Subject Headings (LCSH)", "Dewey Decimal System", "Metadata bias", "Standardized indexing", "Descriptive cataloging", "Systemic bias", "Non-neutral spaces", "Multiplicity of viewpoints", "Inclusive metadata"
-        ];
+    <div class="container">
+        <h1>Library Bingo</h1>
+        <div id="instructions" class="instructions">
+            <p>Click or tap on a cell to mark it. Get 5 in a row (horizontally, vertically, or diagonally) to win!</p>
+        </div>
         
-        const generateBingoCard = () => {
-            return [...bingoTerms].sort(() => Math.random() - 0.5).slice(0, 25);
-        };
+        <div class="controls">
+            <button id="newCardBtn">New Card</button>
+            <button id="resetBtn">Reset Card</button>
+        </div>
+
+        <div id="bingoCard" class="bingo-card">
+            <div id="bingoGrid" class="grid" role="grid" aria-label="Bingo Card">
+                <!-- Cells will be generated here -->
+            </div>
+        </div>
         
-        function Bingo() {
-            const [card, setCard] = React.useState(generateBingoCard());
-            const [marked, setMarked] = React.useState(new Set());
-            const [isWinner, setIsWinner] = React.useState(false);
+        <div id="celebrationMsg" aria-live="assertive"></div>
+        <div id="announcement" aria-live="polite" class="live-region"></div>
+    </div>
+
+    <script>
+        // Bingo terms
+const bingoTerms = [
+  "Research process", "Research stages", "Information search", "Citation", "Citing sources",
+  "Library database", "Peer-reviewed", "Plagiarism", "Research time", "Source credibility",
+  "Evaluation", "Library catalog", "Academia", "Deep web", "Surface web",
+  "Primary sources", "Secondary sources", "Research guides", "Keywords", "Boolean operators",
+  "Search filtering", "Narrowing search", "Search string", "Search results", "Scholarly sources",
+  "Full-text search", "Call numbers", "Circulation desk", "Reference desk", "Library website",
+  "Librarian chat", "Virtual help", "Study spaces", "Library hours", "Library Bingo",
+  "Initiation", "Selection", "Exploration", "Formulation", "Collection",
+  "Presentation", "Assessment", "Uncertainty", "Optimism", "Confusion",
+  "Frustration", "Doubt", "Clarity", "Confidence", "Satisfaction",
+  "Disappointment", "Sense of accomplishment", "Vague thoughts", "Focused thoughts", "Self-awareness",
+  "Increased interest", "Seeking information", "Exploring sources", "Documenting research", "Research anxiety",
+  "Emotional awareness", "Coping strategies", "Curiosity", "Open-ended questions", "Observation without judgment",
+  "Off-campus login", "Class guide", "Library services",
+  "Quotation marks", "Truncation", "Wildcard", "Fuzzy words", "Phrase searching",
+  "Academic journal", "Database access", "Source types", "Search strategy",
+  "Library scope", "Partner libraries", "Library floor map", "Citation chaining",
+  "APA format", "MLA format", "Chicago style", "DOI", "In-text citation",
+  "Publication date", "Library of Congress", "Chat help",
+  "Fake news", "Evaluating sources", "Bias", "Misinformation", "Disinformation",
+  "SIFT method", "Stop", "Investigate", "Find better coverage", "Trace claims",
+  "Wikipedia", "Background info", "Current events", "Fact-checking",
+  "Reference list", "Author credentials", "Source relevance", "Research question",
+  "Abstract", "Introduction", "Methodology", "Discussion", "Conclusion",
+  "Search scope", "Popular source", "Scholarly source", "Library orientation",
+  "ChatGPT in research", "AI bias", "Citation manager", "Citation format",
+  "Information literacy skills",
+  "Information ethics",
+  "Copyright",
+  "Fair use",
+  "Intellectual property",
+  "Open access",
+  "Research data management",
+  "Data privacy",
+  "Algorithm bias",
+  "Filter bubble",
+  "Echo chamber",
+  "Lateral reading",
+  "Vertical reading",
+  "Information architecture",
+  "Controlled vocabulary",
+  "Thesaurus (information science)",
+  "Indexing",
+  "Metadata",
+  "Information retrieval",
+  "Knowledge organization",
+  "Scholarly communication",
+  "Digital literacy",
+  "Media literacy",
+  "Visual literacy",
+  "Data literacy",
+  "Critical thinking",
+  "Literature review",
+  "Annotated bibliography",
+  "Institutional repository",
+  "Research integrity",
+  "Natural language searching",
+  "Subject headings",
+  "Discipline-specific databases",
+  "Interdisciplinary research",
+  "Academic integrity",
+  "Attribution",
+  "Paraphrasing",
+  "Summarizing",
+  "Information lifecycle",
+  "Knowledge creation",
+  "Information sharing",
+  "Scholarly dialogue",
+  "Peer review process",
+  "Editorial board",
+  "Data visualization",
+  "Qualitative research",
+  "Quantitative research",
+  "Mixed methods research",
+  "Research design",
+  "Data analysis",
+  "Statistical significance",
+  "Research limitations",
+  "Academic publishing",
+  "Open educational resources",
+  "Creative Commons licenses",
+  "Information security",
+  "Accessibility (information)",
+  "User experience (UX) in research",
+  "Research tools and technologies",
+  "Artificial intelligence in research",
+  "Natural language processing in research",
+  "Geographic information systems (GIS) in research",
+];
         
-            const toggleMark = (term) => {
-                setMarked(prev => {
-                    const newSet = new Set(prev);
-                    newSet.has(term) ? newSet.delete(term) : newSet.add(term);
-                    checkForWin(newSet);
-                    return newSet;
-                });
-            };
+        // Game state
+        let card = [];
+        let marked = new Set();
+        let isWinner = false;
         
-            const checkForWin = (markedSet) => {
-                const indexes = [...markedSet].map(term => card.indexOf(term));
-                const rows = [[0,1,2,3,4], [5,6,7,8,9], [10,11,12,13,14], [15,16,17,18,19], [20,21,22,23,24]];
-                const cols = [[0,5,10,15,20], [1,6,11,16,21], [2,7,12,17,22], [3,8,13,18,23], [4,9,14,19,24]];
-                const diagonals = [[0,6,12,18,24], [4,8,12,16,20]];
-                const winningLines = [...rows, ...cols, ...diagonals];
-                
-                if (winningLines.some(line => line.every(index => indexes.includes(index)))) {
-                    setIsWinner(true);
-                }
-            };
+        // DOM Elements
+        const bingoGrid = document.getElementById('bingoGrid');
+        const newCardBtn = document.getElementById('newCardBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const celebrationMsg = document.getElementById('celebrationMsg');
+        const announcement = document.getElementById('announcement');
+        const bingoCardContainer = document.getElementById('bingoCard');
         
-            return (
-                <div className={isWinner ? "winner" : ""}>
-                    <div className="grid">
-                        {card.map((term, index) => (
-                            <div key={index} className={`cell ${marked.has(term) ? "marked" : ""}`} onClick={() => toggleMark(term)}>
-                                {term}
-                            </div>
-                        ))}
-                    </div>
-                    {isWinner && <div className="celebration">🎉 Congratulations! You won! 🎉</div>}
-                </div>
-            );
+        // Function to shuffle array
+        function shuffleArray(array) {
+            const shuffled = [...array];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
         }
         
-        ReactDOM.render(<Bingo />, document.getElementById("root"));
+        // Generate bingo card
+        function generateBingoCard() {
+            const shuffled = shuffleArray(bingoTerms);
+            const selected = shuffled.slice(0, 24);
+            
+            // Insert "Free Space" in the middle (index 12)
+            return [...selected.slice(0, 12), "Free Space", ...selected.slice(12)];
+        }
+        
+        // Create visual bingo grid
+        function renderBingoGrid() {
+            bingoGrid.innerHTML = '';
+            
+            for (let i = 0; i < 25; i++) {
+                const term = card[i];
+                const isFreeSpace = term === "Free Space";
+                
+                const cell = document.createElement('div');
+                cell.className = `cell ${marked.has(term) ? 'marked' : ''}`;
+                cell.setAttribute('role', 'button');
+                cell.setAttribute('tabindex', '0');
+                cell.setAttribute('aria-pressed', marked.has(term));
+                cell.setAttribute('aria-label', `${term}${marked.has(term) ? ", marked" : ", not marked"}`);
+                cell.setAttribute('data-term', term);
+                cell.setAttribute('data-row', Math.floor(i / 5));
+                cell.setAttribute('data-col', i % 5);
+                cell.textContent = term;
+                
+                if (isFreeSpace) {
+                    const srOnly = document.createElement('span');
+                    srOnly.className = 'sr-only';
+                    srOnly.textContent = '(automatically marked)';
+                    cell.appendChild(srOnly);
+                }
+                
+                cell.addEventListener('click', () => toggleMark(term));
+                cell.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        toggleMark(term);
+                    }
+                });
+                
+                bingoGrid.appendChild(cell);
+            }
+        }
+        
+        // Toggle marking of a cell
+        function toggleMark(term) {
+            if (marked.has(term)) {
+                if (term !== "Free Space") { // Prevent unmarking free space
+                    marked.delete(term);
+                    announceChange(`Unmarked "${term}"`);
+                }
+            } else {
+                marked.add(term);
+                announceChange(`Marked "${term}"`);
+            }
+            
+            renderBingoGrid();
+            checkForWin();
+        }
+        
+        // Check for winning condition
+        function checkForWin() {
+            const indexes = Array.from(marked).map(term => card.indexOf(term));
+            const rows = [[0,1,2,3,4], [5,6,7,8,9], [10,11,12,13,14], [15,16,17,18,19], [20,21,22,23,24]];
+            const cols = [[0,5,10,15,20], [1,6,11,16,21], [2,7,12,17,22], [3,8,13,18,23], [4,9,14,19,24]];
+            const diagonals = [[0,6,12,18,24], [4,8,12,16,20]];
+            const winningLines = [...rows, ...cols, ...diagonals];
+            
+            const winner = winningLines.some(line => line.every(index => indexes.includes(index)));
+            
+            if (winner && !isWinner) {
+                isWinner = true;
+                bingoCardContainer.classList.add('winner');
+                celebrationMsg.innerHTML = '🎉 BINGO! Congratulations! 🎉';
+                celebrationMsg.classList.add('celebration');
+                announceChange("Congratulations! You got a BINGO!");
+            } else if (!winner && isWinner) {
+                isWinner = false;
+                bingoCardContainer.classList.remove('winner');
+                celebrationMsg.innerHTML = '';
+                celebrationMsg.classList.remove('celebration');
+            }
+        }
+        
+        // Reset the game
+        function resetGame() {
+            marked = new Set(["Free Space"]);
+            isWinner = false;
+            bingoCardContainer.classList.remove('winner');
+            celebrationMsg.innerHTML = '';
+            celebrationMsg.classList.remove('celebration');
+            renderBingoGrid();
+            announceChange("Game reset. Only Free Space is marked.");
+        }
+        
+        // Generate new card
+        function generateNewCard() {
+            card = generateBingoCard();
+            marked = new Set(["Free Space"]);
+            isWinner = false;
+            bingoCardContainer.classList.remove('winner');
+            celebrationMsg.innerHTML = '';
+            celebrationMsg.classList.remove('celebration');
+            renderBingoGrid();
+            announceChange("New bingo card generated.");
+        }
+        
+        // Announce changes for screen readers
+        function announceChange(message) {
+            announcement.textContent = message;
+        }
+        
+        // Event listeners
+        newCardBtn.addEventListener('click', generateNewCard);
+        resetBtn.addEventListener('click', resetGame);
+        
+        // Initialize the game
+        function initGame() {
+            card = generateBingoCard();
+            marked = new Set(["Free Space"]);
+            renderBingoGrid();
+        }
+        
+        // Start the game when the page loads
+        document.addEventListener('DOMContentLoaded', initGame);
+        
+        // Initialize immediately as well
+        initGame();
     </script>
 </body>
 </html>
