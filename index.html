@@ -114,6 +114,7 @@
         .cell:focus {
             outline: 3px solid var(--focus-outline-color);
             outline-offset: 2px;
+            z-index: 1; /* Ensure focus outline is visible above other elements */
         }
         
         .cell.marked {
@@ -156,6 +157,31 @@
             clip: rect(0, 0, 0, 0);
             white-space: nowrap;
             border-width: 0;
+        }
+        
+        .keyboard-instructions {
+            background-color: #f5f5f5;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 10px;
+            margin: 10px auto 20px;
+            max-width: 800px;
+            font-size: 0.9rem;
+        }
+
+        .keyboard-instructions kbd {
+            background-color: #f7f7f7;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            box-shadow: 0 1px 0 rgba(0,0,0,0.2);
+            color: #333;
+            display: inline-block;
+            font-family: monospace;
+            font-size: 0.9em;
+            font-weight: bold;
+            line-height: 1;
+            padding: 3px 5px;
+            margin: 0 2px;
         }
         
         @keyframes pulse {
@@ -218,6 +244,14 @@
             <p>Click or tap on a cell to mark it. Get 5 in a row (horizontally, vertically, or diagonally) to win!</p>
         </div>
         
+        <div class="keyboard-instructions">
+            <p><strong>Keyboard Controls:</strong> 
+                <kbd>↑</kbd> <kbd>↓</kbd> <kbd>←</kbd> <kbd>→</kbd> to navigate, 
+                <kbd>Enter</kbd> or <kbd>Space</kbd> to mark a cell,
+                <kbd>Tab</kbd> to move between elements
+            </p>
+        </div>
+        
         <div class="controls">
             <button id="newCardBtn">New Card</button>
             <button id="resetBtn">Reset Card</button>
@@ -235,101 +269,102 @@
 
     <script>
         // Bingo terms
-const bingoTerms = [
-  "Research process", "Research stages", "Information search", "Citation", "Citing sources",
-  "Library database", "Peer-reviewed", "Plagiarism", "Research time", "Source credibility",
-  "Evaluation", "Library catalog", "Academia", "Deep web", "Surface web",
-  "Primary sources", "Secondary sources", "Research guides", "Keywords", "Boolean operators",
-  "Search filtering", "Narrowing search", "Search string", "Search results", "Scholarly sources",
-  "Full-text search", "Call numbers", "Circulation desk", "Reference desk", "Library website",
-  "Librarian chat", "Virtual help", "Study spaces", "Library hours", "Library Bingo",
-  "Initiation", "Selection", "Exploration", "Formulation", "Collection",
-  "Presentation", "Assessment", "Uncertainty", "Optimism", "Confusion",
-  "Frustration", "Doubt", "Clarity", "Confidence", "Satisfaction",
-  "Disappointment", "Sense of accomplishment", "Vague thoughts", "Focused thoughts", "Self-awareness",
-  "Increased interest", "Seeking information", "Exploring sources", "Documenting research", "Research anxiety",
-  "Emotional awareness", "Coping strategies", "Curiosity", "Open-ended questions", "Observation without judgment",
-  "Off-campus login", "Class guide", "Library services",
-  "Quotation marks", "Truncation", "Wildcard", "Fuzzy words", "Phrase searching",
-  "Academic journal", "Database access", "Source types", "Search strategy",
-  "Library scope", "Partner libraries", "Library floor map", "Citation chaining",
-  "APA format", "MLA format", "Chicago style", "DOI", "In-text citation",
-  "Publication date", "Library of Congress", "Chat help",
-  "Fake news", "Evaluating sources", "Bias", "Misinformation", "Disinformation",
-  "SIFT method", "Stop", "Investigate", "Find better coverage", "Trace claims",
-  "Wikipedia", "Background info", "Current events", "Fact-checking",
-  "Reference list", "Author credentials", "Source relevance", "Research question",
-  "Abstract", "Introduction", "Methodology", "Discussion", "Conclusion",
-  "Search scope", "Popular source", "Scholarly source", "Library orientation",
-  "ChatGPT in research", "AI bias", "Citation manager", "Citation format",
-  "Information literacy skills",
-  "Information ethics",
-  "Copyright",
-  "Fair use",
-  "Intellectual property",
-  "Open access",
-  "Research data management",
-  "Data privacy",
-  "Algorithm bias",
-  "Filter bubble",
-  "Echo chamber",
-  "Lateral reading",
-  "Vertical reading",
-  "Information architecture",
-  "Controlled vocabulary",
-  "Thesaurus (information science)",
-  "Indexing",
-  "Metadata",
-  "Information retrieval",
-  "Knowledge organization",
-  "Scholarly communication",
-  "Digital literacy",
-  "Media literacy",
-  "Visual literacy",
-  "Data literacy",
-  "Critical thinking",
-  "Literature review",
-  "Annotated bibliography",
-  "Institutional repository",
-  "Research integrity",
-  "Natural language searching",
-  "Subject headings",
-  "Discipline-specific databases",
-  "Interdisciplinary research",
-  "Academic integrity",
-  "Attribution",
-  "Paraphrasing",
-  "Summarizing",
-  "Information lifecycle",
-  "Knowledge creation",
-  "Information sharing",
-  "Scholarly dialogue",
-  "Peer review process",
-  "Editorial board",
-  "Data visualization",
-  "Qualitative research",
-  "Quantitative research",
-  "Mixed methods research",
-  "Research design",
-  "Data analysis",
-  "Statistical significance",
-  "Research limitations",
-  "Academic publishing",
-  "Open educational resources",
-  "Creative Commons licenses",
-  "Information security",
-  "Accessibility (information)",
-  "User experience (UX) in research",
-  "Research tools and technologies",
-  "Artificial intelligence in research",
-  "Natural language processing in research",
-  "Geographic information systems (GIS) in research",
-];
+        const bingoTerms = [
+          "Research process", "Research stages", "Information search", "Citation", "Citing sources",
+          "Library database", "Peer-reviewed", "Plagiarism", "Research time", "Source credibility",
+          "Evaluation", "Library catalog", "Academia", "Deep web", "Surface web",
+          "Primary sources", "Secondary sources", "Research guides", "Keywords", "Boolean operators",
+          "Search filtering", "Narrowing search", "Search string", "Search results", "Scholarly sources",
+          "Full-text search", "Call numbers", "Circulation desk", "Reference desk", "Library website",
+          "Librarian chat", "Virtual help", "Study spaces", "Library hours", "Library Bingo",
+          "Initiation", "Selection", "Exploration", "Formulation", "Collection",
+          "Presentation", "Assessment", "Uncertainty", "Optimism", "Confusion",
+          "Frustration", "Doubt", "Clarity", "Confidence", "Satisfaction",
+          "Disappointment", "Sense of accomplishment", "Vague thoughts", "Focused thoughts", "Self-awareness",
+          "Increased interest", "Seeking information", "Exploring sources", "Documenting research", "Research anxiety",
+          "Emotional awareness", "Coping strategies", "Curiosity", "Open-ended questions", "Observation without judgment",
+          "Off-campus login", "Class guide", "Library services",
+          "Quotation marks", "Truncation", "Wildcard", "Fuzzy words", "Phrase searching",
+          "Academic journal", "Database access", "Source types", "Search strategy",
+          "Library scope", "Partner libraries", "Library floor map", "Citation chaining",
+          "APA format", "MLA format", "Chicago style", "DOI", "In-text citation",
+          "Publication date", "Library of Congress", "Chat help",
+          "Fake news", "Evaluating sources", "Bias", "Misinformation", "Disinformation",
+          "SIFT method", "Stop", "Investigate", "Find better coverage", "Trace claims",
+          "Wikipedia", "Background info", "Current events", "Fact-checking",
+          "Reference list", "Author credentials", "Source relevance", "Research question",
+          "Abstract", "Introduction", "Methodology", "Discussion", "Conclusion",
+          "Search scope", "Popular source", "Scholarly source", "Library orientation",
+          "ChatGPT in research", "AI bias", "Citation manager", "Citation format",
+          "Information literacy skills",
+          "Information ethics",
+          "Copyright",
+          "Fair use",
+          "Intellectual property",
+          "Open access",
+          "Research data management",
+          "Data privacy",
+          "Algorithm bias",
+          "Filter bubble",
+          "Echo chamber",
+          "Lateral reading",
+          "Vertical reading",
+          "Information architecture",
+          "Controlled vocabulary",
+          "Thesaurus (information science)",
+          "Indexing",
+          "Metadata",
+          "Information retrieval",
+          "Knowledge organization",
+          "Scholarly communication",
+          "Digital literacy",
+          "Media literacy",
+          "Visual literacy",
+          "Data literacy",
+          "Critical thinking",
+          "Literature review",
+          "Annotated bibliography",
+          "Institutional repository",
+          "Research integrity",
+          "Natural language searching",
+          "Subject headings",
+          "Discipline-specific databases",
+          "Interdisciplinary research",
+          "Academic integrity",
+          "Attribution",
+          "Paraphrasing",
+          "Summarizing",
+          "Information lifecycle",
+          "Knowledge creation",
+          "Information sharing",
+          "Scholarly dialogue",
+          "Peer review process",
+          "Editorial board",
+          "Data visualization",
+          "Qualitative research",
+          "Quantitative research",
+          "Mixed methods research",
+          "Research design",
+          "Data analysis",
+          "Statistical significance",
+          "Research limitations",
+          "Academic publishing",
+          "Open educational resources",
+          "Creative Commons licenses",
+          "Information security",
+          "Accessibility (information)",
+          "User experience (UX) in research",
+          "Research tools and technologies",
+          "Artificial intelligence in research",
+          "Natural language processing in research",
+          "Geographic information systems (GIS) in research",
+        ];
         
         // Game state
         let card = [];
         let marked = new Set();
         let isWinner = false;
+        let currentFocusIndex = 0; // Track which cell is focused for keyboard navigation
         
         // DOM Elements
         const bingoGrid = document.getElementById('bingoGrid');
@@ -369,10 +404,11 @@ const bingoTerms = [
                 const cell = document.createElement('div');
                 cell.className = `cell ${marked.has(term) ? 'marked' : ''}`;
                 cell.setAttribute('role', 'button');
-                cell.setAttribute('tabindex', '0');
+                cell.setAttribute('tabindex', i === currentFocusIndex ? '0' : '-1'); // Only one cell is keyboard focusable at a time
                 cell.setAttribute('aria-pressed', marked.has(term));
                 cell.setAttribute('aria-label', `${term}${marked.has(term) ? ", marked" : ", not marked"}`);
                 cell.setAttribute('data-term', term);
+                cell.setAttribute('data-index', i);
                 cell.setAttribute('data-row', Math.floor(i / 5));
                 cell.setAttribute('data-col', i % 5);
                 cell.textContent = term;
@@ -385,14 +421,73 @@ const bingoTerms = [
                 }
                 
                 cell.addEventListener('click', () => toggleMark(term));
-                cell.addEventListener('keydown', (e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                        e.preventDefault();
-                        toggleMark(term);
-                    }
-                });
+                cell.addEventListener('keydown', handleCellKeyDown);
                 
                 bingoGrid.appendChild(cell);
+            }
+            
+            // Set focus to the currently focused cell after rendering
+            setTimeout(() => {
+                const cellToFocus = document.querySelector(`[data-index="${currentFocusIndex}"]`);
+                if (cellToFocus) {
+                    cellToFocus.focus();
+                }
+            }, 0);
+        }
+        
+        // Handle keyboard navigation
+        function handleCellKeyDown(e) {
+            const currentIndex = parseInt(e.target.getAttribute('data-index'));
+            let newIndex = currentIndex;
+            const rowSize = 5;
+            
+            switch(e.key) {
+                case 'ArrowUp':
+                    e.preventDefault();
+                    newIndex = Math.max(0, currentIndex - rowSize);
+                    break;
+                case 'ArrowDown':
+                    e.preventDefault();
+                    newIndex = Math.min(24, currentIndex + rowSize);
+                    break;
+                case 'ArrowLeft':
+                    e.preventDefault();
+                    if (currentIndex % rowSize !== 0) { // Not at the leftmost column
+                        newIndex = currentIndex - 1;
+                    }
+                    break;
+                case 'ArrowRight':
+                    e.preventDefault();
+                    if (currentIndex % rowSize !== rowSize - 1) { // Not at the rightmost column
+                        newIndex = currentIndex + 1;
+                    }
+                    break;
+                case 'Enter':
+                case ' ':
+                    e.preventDefault();
+                    toggleMark(card[currentIndex]);
+                    return;
+                default:
+                    return; // Do nothing for other keys
+            }
+            
+            if (newIndex !== currentIndex) {
+                currentFocusIndex = newIndex;
+                
+                // Update tabindex values
+                document.querySelectorAll('.cell').forEach(cell => {
+                    const cellIndex = parseInt(cell.getAttribute('data-index'));
+                    cell.setAttribute('tabindex', cellIndex === newIndex ? '0' : '-1');
+                });
+                
+                // Focus the new cell
+                const cellToFocus = document.querySelector(`[data-index="${newIndex}"]`);
+                if (cellToFocus) {
+                    cellToFocus.focus();
+                }
+                
+                const term = card[newIndex];
+                announceChange(`Moved to ${term}${marked.has(term) ? ", marked" : ", not marked"}`);
             }
         }
         
@@ -464,6 +559,40 @@ const bingoTerms = [
             announcement.textContent = message;
         }
         
+        // Set up keyboard navigation for the game controls
+        function setupKeyboardNavigation() {
+            // Global keyboard listeners for when focus is outside the grid
+            document.addEventListener('keydown', function(e) {
+                // Only handle keyboard events when focus is not in the grid
+                if (!e.target.closest('.grid')) {
+                    return;
+                }
+            });
+            
+            // Handle keyboard navigation between main UI elements
+            newCardBtn.addEventListener('keydown', function(e) {
+                if (e.key === 'ArrowRight') {
+                    e.preventDefault();
+                    resetBtn.focus();
+                } else if (e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    // Move focus to the grid
+                    document.querySelector(`.cell[data-index="${currentFocusIndex}"]`).focus();
+                }
+            });
+            
+            resetBtn.addEventListener('keydown', function(e) {
+                if (e.key === 'ArrowLeft') {
+                    e.preventDefault();
+                    newCardBtn.focus();
+                } else if (e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    // Move focus to the grid
+                    document.querySelector(`.cell[data-index="${currentFocusIndex}"]`).focus();
+                }
+            });
+        }
+        
         // Event listeners
         newCardBtn.addEventListener('click', generateNewCard);
         resetBtn.addEventListener('click', resetGame);
@@ -472,7 +601,9 @@ const bingoTerms = [
         function initGame() {
             card = generateBingoCard();
             marked = new Set(["Free Space"]);
+            currentFocusIndex = 0; // Start with the first cell focused
             renderBingoGrid();
+            setupKeyboardNavigation();
         }
         
         // Start the game when the page loads
